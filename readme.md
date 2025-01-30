@@ -5,6 +5,18 @@ Floating Point Conversion
 
 This assignment demonstrates converting from a floating point number to an integer using only integer and bitwise operations.
 
+Learning Objectives
+-------------------
+
+After completing this assignment, students will be able to:
+
+- Use bitwise operations to mask bit fields
+- Access the individual components of floating point numbers
+- Convert floating point numbers to integers
+
+Task
+----
+
 You will create implementations for the following functions:
 
 - `is_negative`

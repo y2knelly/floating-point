@@ -44,16 +44,14 @@ unsigned int is_negative(float f) {
   /*
    * Return true if the supplied float is negative 
    */
-
-  return 0;
+  return (as_int(f) >> 31) & 1;
 }
 
 unsigned int get_raw_exponent(float f) {
   /*
    * Returns the raw unsigned exponent bits of the passed float 
    */
-
-  return 0;
+   return (as_int(f) >> 23) & 0xFF;
 }
 
 int get_exponent(float f) {
@@ -62,24 +60,21 @@ int get_exponent(float f) {
    *
    * Hint: You may call `get_raw_exponent`
    */
-
-  return 0;
+   return get_raw_exponent(f) - 127;
 }
 
 unsigned int get_raw_mantissa(float f) {
   /*
    * Returns the mantissa as extracted directly from the bit field
    */
-
-  return 0;
+  return as_int(f) & 0x7FFFFF;
 }
 
 unsigned int get_mantissa(float f) {
   /*
    * Returns the mantissa of the passed float 
    */
-
-  return 0;
+  return get_raw_mantissa(f) | (1 << 23);
 }
 
 int float_to_int(float f) {
@@ -97,7 +92,34 @@ int float_to_int(float f) {
    * more than the operand word size or if shifting by a negative number
    */
 
-  return 0;
+  if (f == 0) {
+    return 0;
+  }
+
+  unsigned int sign = is_negative(f);
+  int exponent = get_exponent(f);
+  unsigned int mantissa = get_mantissa(f);
+
+  // Handle small numbers by returning 0
+  if (exponent < 0) {
+    return 0;
+  }
+
+  // Check for overflow
+  if (exponent >= 31) {
+    return sign ? 0x80000000 : 0x7FFFFFFF;
+  }
+
+  // Adjust mantissa based on exponent
+  int result;
+  if (exponent > 23) {
+    result = mantissa << (exponent - 23);
+  } else {
+    result = mantissa >> (23 - exponent);
+  }
+
+  // Apply sign
+  return sign ? -result : result;
 }
 
 /* 
